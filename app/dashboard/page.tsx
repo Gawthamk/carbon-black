@@ -460,7 +460,11 @@ function DashboardContent() {
         <header className="flex justify-between items-center mb-6 animate-slideDown">
           <div className="text-center flex-1">
             <div className="flex justify-center mb-4">
-              <img src="/PCBL.NS_BIG.png" alt="Carbon Black OAN Tool Logo" className="h-12 w-auto" />
+              <img
+                src="/PCBL.NS_BIG.png"
+                alt="Carbon Black OAN Tool Logo"
+                style={{ width: "120px", marginBottom: "12px" }}
+              />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Carbon Black OAN Prediction Tool

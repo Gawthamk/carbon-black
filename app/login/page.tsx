@@ -102,7 +102,11 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <img src="/PCBL.NS_BIG.png" alt="Carbon Black OAN Tool Logo" className="h-16 w-auto" />
+            <img
+              src="/PCBL.NS_BIG.png"
+              alt="Carbon Black OAN Tool Logo"
+              style={{ width: "80px", marginBottom: "16px" }}
+            />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900">Carbon Black OAN Tool</CardTitle>
           <CardDescription>Enter your username to access the prediction tool</CardDescription>
