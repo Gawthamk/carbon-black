@@ -101,8 +101,12 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <img src="/PCBL.NS_BIG.png" alt="Carbon Black OAN Tool Logo" className="h-16 w-auto" />
+          </div>
           <CardTitle className="text-2xl font-bold text-gray-900">Carbon Black OAN Tool</CardTitle>
           <CardDescription>Enter your username to access the prediction tool</CardDescription>
+          <p className="text-sm text-gray-500 mt-2">Made by Gawtham K</p>
 
           {/* Connection Status */}
           <div className="flex items-center justify-center gap-2 mt-2">

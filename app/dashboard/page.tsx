@@ -459,6 +459,9 @@ function DashboardContent() {
       <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-7xl">
         <header className="flex justify-between items-center mb-6 animate-slideDown">
           <div className="text-center flex-1">
+            <div className="flex justify-center mb-4">
+              <img src="/PCBL.NS_BIG.png" alt="Carbon Black OAN Tool Logo" className="h-12 w-auto" />
+            </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Carbon Black OAN Prediction Tool
             </h1>
@@ -466,6 +469,7 @@ function DashboardContent() {
               Welcome, <span className="font-semibold text-blue-600">{user.username}</span>. Sequential calculation
               system with automatic mean updates.
             </p>
+            <p className="text-sm text-gray-500 mt-1">Made by Gawtham K</p>
           </div>
           <Button
             onClick={handleLogout}

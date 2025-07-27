@@ -4,9 +4,9 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'Carbon Black OAN Tool',
+  description: 'Made by Gawtham K',
+  generator: 'Carbon Black OAN Tool',
 }
 
 export default function RootLayout({
@@ -17,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/PCBL.NS_BIG.png" type="image/png" />
         <style>{`
 html {
   font-family: ${GeistSans.style.fontFamily};
