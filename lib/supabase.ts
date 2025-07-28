@@ -58,9 +58,7 @@ export const isSupabaseConfigured = () => {
 export type User = {
   id: string
   username: string
-  password_hash?: string | null
   created_at: string
-  updated_at?: string
 }
 
 export type OanEntry = {
@@ -100,113 +98,6 @@ export const GRADE_PRESETS = {
   N774: { lsl: 69, target: 72, usl: 75 },
   N762: { lsl: 62, target: 65, usl: 68 },
 } as const
-
-// Password hashing utilities (simple implementation - in production use bcrypt)
-export const hashPassword = async (password: string): Promise<string> => {
-  // Simple hash implementation - in production, use bcrypt or similar
-  const encoder = new TextEncoder()
-  const data = encoder.encode(password + "carbon_black_salt_2024")
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
-}
-
-export const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
-  const hashedInput = await hashPassword(password)
-  return hashedInput === hash
-}
-
-// CSV Export/Import utilities
-export const exportToCSV = (entries: OanEntry[], filename?: string): void => {
-  const headers = [
-    "Grade",
-    "OAN",
-    "LSL",
-    "USL",
-    "Target OAN",
-    "K2CO3 Flow",
-    "Oil Flow",
-    "Predicted OAN",
-    "Timestamp",
-    "Created At",
-  ]
-
-  const csvContent = [
-    headers.join(","),
-    ...entries.map((entry) =>
-      [
-        entry.grade,
-        entry.oan,
-        entry.lsl,
-        entry.usl,
-        entry.target_oan,
-        entry.k2co3_flow,
-        entry.oil_flow,
-        entry.predicted_oan || "",
-        entry.timestamp,
-        entry.created_at,
-      ].join(","),
-    ),
-  ].join("\n")
-
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-  const link = document.createElement("a")
-  const url = URL.createObjectURL(blob)
-  link.setAttribute("href", url)
-  link.setAttribute("download", filename || `oan_entries_${new Date().toISOString().split("T")[0]}.csv`)
-  link.style.visibility = "hidden"
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-}
-
-export const parseCSV = (csvText: string): Partial<OanEntry>[] => {
-  const lines = csvText.trim().split("\n")
-  const headers = lines[0].split(",").map((h) => h.trim())
-
-  return lines
-    .slice(1)
-    .map((line) => {
-      const values = line.split(",").map((v) => v.trim())
-      const entry: any = {}
-
-      headers.forEach((header, index) => {
-        const value = values[index]
-        switch (header.toLowerCase()) {
-          case "grade":
-            entry.grade = value
-            break
-          case "oan":
-            entry.oan = Number.parseFloat(value)
-            break
-          case "lsl":
-            entry.lsl = Number.parseFloat(value)
-            break
-          case "usl":
-            entry.usl = Number.parseFloat(value)
-            break
-          case "target oan":
-            entry.target_oan = Number.parseFloat(value)
-            break
-          case "k2co3 flow":
-            entry.k2co3_flow = Number.parseFloat(value)
-            break
-          case "oil flow":
-            entry.oil_flow = Number.parseFloat(value)
-            break
-          case "predicted oan":
-            entry.predicted_oan = value ? Number.parseFloat(value) : null
-            break
-          case "timestamp":
-            entry.timestamp = value
-            break
-        }
-      })
-
-      return entry
-    })
-    .filter((entry) => entry.grade && !isNaN(entry.oan))
-}
 
 // Test Supabase connection with better error handling
 export const testConnection = async () => {
