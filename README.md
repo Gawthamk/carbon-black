@@ -51,9 +51,7 @@ cd carbon-black
 ```bash
 npm install
 # or
-yarn install
-# or
-pnpm install
+bun install
 ```
 
 3. **Environment Setup**
@@ -74,11 +72,9 @@ Run the SQL scripts in order to set up your database:
 
 5. **Start the development server**
 ```bash
-npm run dev
+next dev
 # or
-yarn dev
-# or
-pnpm dev
+bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
@@ -200,7 +196,7 @@ export const GRADE_PRESETS = {
 3. Deploy automatically on push
 
 ### Manual Deployment
-1. Build the application: `npm run build`
+1. Build the application: `next build`
 2. Set up your production environment variables
 3. Deploy to your hosting platform
 
