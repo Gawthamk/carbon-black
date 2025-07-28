@@ -43,7 +43,7 @@ A Next.js web application for predicting and analyzing Oil Absorption Number (OA
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
+git clone https://github.com/Gawthamk/carbon-black.git
 cd carbon-black
 ```
 
