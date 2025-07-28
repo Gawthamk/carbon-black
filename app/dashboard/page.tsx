@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase, type User, type OanEntry, isSupabaseConfigured } from "@/lib/supabase"
+import { supabase, type User, type OanEntry, isSupabaseConfigured, GRADE_PRESETS } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -424,6 +424,76 @@ function DashboardContent() {
     }
   }
 
+  const importEntries = async (importData: Partial<OanEntry>[]) => {
+    if (!user) {
+      return { success: false, error: "User not found", imported: 0 }
+    }
+
+    try {
+      console.log("Importing", importData.length, "entries for user:", user.id)
+
+      let imported = 0
+      const errors: string[] = []
+
+      for (const entry of importData) {
+        try {
+          // Validate required fields
+          if (!entry.grade || !entry.oan || !entry.k2co3_flow || !entry.oil_flow || !entry.timestamp) {
+            errors.push(`Skipping entry: missing required fields`)
+            continue
+          }
+
+          // Get grade presets or use entry values
+          const gradePresets = GRADE_PRESETS[entry.grade as keyof typeof GRADE_PRESETS]
+
+          const insertData = {
+            user_id: user.id,
+            grade: entry.grade,
+            oan: entry.oan,
+            lsl: entry.lsl || gradePresets?.lsl || 0,
+            usl: entry.usl || gradePresets?.usl || 100,
+            target_oan: entry.target_oan || gradePresets?.target || entry.oan,
+            k2co3_flow: entry.k2co3_flow,
+            oil_flow: entry.oil_flow,
+            predicted_oan: entry.predicted_oan || null,
+            timestamp: entry.timestamp,
+          }
+
+          const { error: insertError } = await supabase.from("oan_entries").insert([insertData])
+
+          if (insertError) {
+            console.error("Error inserting entry:", insertError)
+            errors.push(`Failed to import entry: ${insertError.message}`)
+            continue
+          }
+
+          imported++
+        } catch (entryError: any) {
+          console.error("Error processing entry:", entryError)
+          errors.push(`Error processing entry: ${entryError.message}`)
+        }
+      }
+
+      if (imported > 0) {
+        // Refresh all entries
+        await fetchAllEntries(user.id)
+      }
+
+      if (errors.length > 0 && imported === 0) {
+        return { success: false, error: errors.join("; "), imported: 0 }
+      }
+
+      return {
+        success: true,
+        imported,
+        error: errors.length > 0 ? `${imported} imported, ${errors.length} failed` : undefined,
+      }
+    } catch (err: any) {
+      console.error("Error importing entries:", err)
+      return { success: false, error: err.message || "Failed to import entries", imported: 0 }
+    }
+  }
+
   const handleLogout = () => {
     localStorage.removeItem("currentUser")
     localStorage.removeItem("selectedGrade") // Clear grade selection on logout
@@ -459,13 +529,6 @@ function DashboardContent() {
       <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-7xl">
         <header className="flex justify-between items-center mb-6 animate-slideDown">
           <div className="text-center flex-1">
-            <div className="flex justify-center mb-4">
-              <img
-                src="/PCBL.NS_BIG.png"
-                alt="Carbon Black OAN Tool Logo"
-                style={{ width: "120px", marginBottom: "12px" }}
-              />
-            </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Carbon Black OAN Prediction Tool
             </h1>
@@ -473,7 +536,6 @@ function DashboardContent() {
               Welcome, <span className="font-semibold text-blue-600">{user.username}</span>. Sequential calculation
               system with automatic mean updates.
             </p>
-            <p className="text-sm text-gray-500 mt-1">Made by Gawtham K</p>
           </div>
           <Button
             onClick={handleLogout}
@@ -517,7 +579,7 @@ function DashboardContent() {
           </TabsContent>
 
           <TabsContent value="history" className="animate-fadeIn">
-            <HistoryTable entries={filteredEntries} onDeleteEntry={deleteEntry} />
+            <HistoryTable entries={filteredEntries} onDeleteEntry={deleteEntry} onImportEntries={importEntries} />
           </TabsContent>
 
           <TabsContent value="analysis" className="animate-fadeIn">
